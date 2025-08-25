@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Player Clue Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #1a2a6c;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .score {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .clue-container {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .clue {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: left;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .reveal-btn {
+            background-color: #1a2a6c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        .reveal-btn:hover {
+            background-color: #2a3a8c;
+        }
+        
+        .input-container {
+            margin-bottom: 20px;
+        }
+        
+        input {
+            width: 70%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #218838;
+        }
+        
+        .result {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .player-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 15px auto;
+            border: 5px solid #1a2a6c;
+            display: none;
+        }
+        
+        .next-btn {
+            background-color: #fdbb2d;
+            color: #333;
+            display: none;
+            margin: 0 auto;
+        }
+        
+        .next-btn:hover {
+            background-color: #f7a90c;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #1a2a6c;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .clue-number {
+            font-size: 1rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        
+        .level {
+            font-size: 1.2rem;
+            color: #1a2a6c;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Football Player Clue Quiz</h1>
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="level">Level: <span id="level">1</span></div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="clue-number">Clue <span id="clue-index">1</span> of <span id="total-clues">5</span></div>
+        
+        <div class="clue-container">
+            <div class="clue" id="clue-text"></div>
+            <button class="reveal-btn" id="reveal-btn">Reveal Next Clue</button>
+        </div>
+        
+        <div class="input-container">
+            <input type="text" id="player-input" placeholder="Guess the football player...">
+            <button id="submit-btn">Submit</button>
+        </div>
+        
+        <div class="result" id="result"></div>
+        <img class="player-image" id="player-image" src="" alt="Player Image">
+        
+        <button class="next-btn" id="next-btn">Next Player</button>
+    </div>
+
+    <script>
+        // Player database with clues and image URLs
+        const players = [
+            {
+                name: "Lionel Messi",
+                clues: [
+                    "Argentinian forward considered one of the greatest of all time",
+                    "Spent most of his career at Barcelona before moving to PSG",
+                    "Won a record 7 Ballon d'Or awards",
+                    "His famous celebration involves pointing to the sky",
+                    "Led Argentina to World Cup victory in 2022"
+                ],
+                image: "https://static.independent.co.uk/2023/06/07/15/GettyImages-1258919370.jpg"
+            },
+            {
+                name: "Cristiano Ronaldo",
+                clues: [
+                    "Portuguese forward known for his incredible athleticism and goal scoring",
+                    "Has played for Manchester United, Real Madrid, and Juventus",
+                    "Has won 5 Ballon d'Or awards",
+                    "Famous for his 'Sii' celebration",
+                    "Is the all-time top scorer in the Champions League"
+                ],
+                image: "https://cdn.vox-cdn.com/thumbor/7VX4hW3Rz0jYJ6+CVd2ZF3W5s6s=/0x0:5000x3333/1200x800/filters:focal(2100x1267:2900x2067)/cdn.vox-cdn.com/uploads/chorus_image/image/71903897/1245362315.0.jpg"
+            },
+            {
+                name: "Neymar Jr",
+                clues: [
+                    "Brazilian forward known for his dribbling skills and flair",
+                    "Formed a famous attacking trio with Messi and Suarez at Barcelona",
+                    "Became the most expensive transfer in history when moving to PSG",
+                    "Has a famous sister who often attends his games",
+                    "Won the Champions League with Barcelona in 2015"
+                ],
+                image: "https://cdn.vox-cdn.com/thumbor/4V7Vg_7vUyXq8CkLv8p9Y1xQn_c=/0x0:4000x2667/1200x800/filters:focal(1680x1014:2320x1654)/cdn.vox-cdn.com/uploads/chorus_image/image/72029815/1247731406.0.jpg"
+            },
+            {
+                name: "Kylian Mbappé",
+                clues: [
+                    "French forward known for his incredible speed and finishing",
+                    "Burst onto the scene with Monaco before moving to PSG",
+                    "Won the World Cup with France in 2018 as a teenager",
+                    "Scored a hat-trick in the 2022 World Cup final",
+                    "Often compared to Thierry Henry for his playing style"
+                ],
+                image: "https://cdn.vox-cdn.com/thumbor/4V7Vg_7vUyXq8CkLv8p9Y1xQn_c=/0x0:4000x2667/1200x800/filters:focal(1680x1014:2320x1654)/cdn.vox-cdn.com/uploads/chorus_image/image/72029815/1247731406.0.jpg"
+            },
+            {
+                name: "Erling Haaland",
+                clues: [
+                    "Norwegian striker known for his physical presence and goal scoring",
+                    "Played for Borussia Dortmund before moving to Manchester City",
+                    "Son of former Manchester City player Alf-Inge Haaland",
+                    "Broke the Premier League scoring record in his first season",
+                    "Known for his robotic goal celebration"
+                ],
+                image: "https://cdn.vox-cdn.com/thumbor/4V7Vg_7vUyXq8CkLv8p9Y1xQn_c=/0x0:4000x2667/1200x800/filters:focal(1680x1014:2320x1654)/cdn.vox-cdn.com/uploads/chorus_image/image/72029815/1247731406.0.jpg"
+            }
+        ];
+
+        let currentPlayerIndex = 0;
+        let currentClueIndex = 0;
+        let score = 0;
+        let level = 1;
+        
+        const clueText = document.getElementById('clue-text');
+        const revealBtn = document.getElementById('reveal-btn');
+        const playerInput = document.getElementById('player-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultDiv = document.getElementById('result');
+        const playerImage = document.getElementById('player-image');
+        const nextBtn = document.getElementById('next-btn');
+        const scoreElement = document.getElementById('score');
+        const levelElement = document.getElementById('level');
+        const progressBar = document.getElementById('progress');
+        const clueIndexElement = document.getElementById('clue-index');
+        const totalCluesElement = document.getElementById('total-clues');
+        
+        // Initialize the game
+        function initGame() {
+            currentClueIndex = 0;
+            clueText.textContent = players[currentPlayerIndex].clues[currentClueIndex];
+            clueIndexElement.textContent = currentClueIndex + 1;
+            totalCluesElement.textContent = players[currentPlayerIndex].clues.length;
+            updateProgressBar();
+            
+            // Reset UI elements
+            resultDiv.style.display = 'none';
+            playerImage.style.display = 'none';
+            nextBtn.style.display = 'none';
+            revealBtn.style.display = 'block';
+            playerInput.value = '';
+            playerInput.disabled = false;
+            submitBtn.disabled = false;
+        }
+        
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = ((currentClueIndex + 1) / players[currentPlayerIndex].clues.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+        
+        // Reveal next clue
+        revealBtn.addEventListener('click', () => {
+            if (currentClueIndex < players[currentPlayerIndex].clues.length - 1) {
+                currentClueIndex++;
+                clueText.textContent = players[currentPlayerIndex].clues[currentClueIndex];
+                clueIndexElement.textContent = currentClueIndex + 1;
+                updateProgressBar();
+                
+                // Hide reveal button if all clues are shown
+                if (currentClueIndex === players[currentPlayerIndex].clues.length - 1) {
+                    revealBtn.style.display = 'none';
+                }
+            }
+        });
+        
+        // Check answer
+        submitBtn.addEventListener('click', checkAnswer);
+        playerInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+        
+        function checkAnswer() {
+            const guess = playerInput.value.trim().toLowerCase();
+            const correctAnswer = players[currentPlayerIndex].name.toLowerCase();
+            
+            // Simple check for correct answer (could be improved with fuzzy matching)
+            if (guess === correctAnswer) {
+                // Correct answer
+                score += (players[currentPlayerIndex].clues.length - currentClueIndex) * 10;
+                scoreElement.textContent = score;
+                
+                resultDiv.textContent = `Correct! It's ${players[currentPlayerIndex].name}. You earned ${(players[currentPlayerIndex].clues.length - currentClueIndex) * 10} points!`;
+                resultDiv.className = 'result correct';
+                resultDiv.style.display = 'block';
+                
+                // Show player image
+                playerImage.src = players[currentPlayerIndex].image;
+                playerImage.style.display = 'block';
+                
+                // Check if level should increase
+                if (score >= level * 100) {
+                    level++;
+                    levelElement.textContent = level;
+                }
+            } else {
+                // Incorrect answer
+                resultDiv.textContent = `Incorrect! The answer was ${players[currentPlayerIndex].name}.`;
+                resultDiv.className = 'result incorrect';
+                resultDiv.style.display = 'block';
+                
+                // Show player image
+                playerImage.src = players[currentPlayerIndex].image;
+                playerImage.style.display = 'block';
+            }
+            
+            // Disable input and reveal button, show next button
+            playerInput.disabled = true;
+            submitBtn.disabled = true;
+            revealBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+        }
+        
+        // Move to next player
+        nextBtn.addEventListener('click', () => {
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            initGame();
+        });
+        
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>
+```
+
+
