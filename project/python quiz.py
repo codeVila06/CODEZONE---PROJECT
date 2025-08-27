@@ -337,7 +337,7 @@ class MillionaireQuiz:
             
             if self.level < 40:
                 self.level += 1
-                self.level_label.config(text=f"Level: {self.level}/70")
+                self.level_label.config(text=f"Level: {self.level}/40")
                 self.load_question()
             else:
                 messagebox.showinfo("Congratulations!", 
