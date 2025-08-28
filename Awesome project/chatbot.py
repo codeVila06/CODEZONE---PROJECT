@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import scrolledtext, font
 import random
-import time
 
 class NotionAIChatbot:
     def __init__(self, root):
@@ -21,97 +20,22 @@ class NotionAIChatbot:
         self.header_bg = "#FFFFFF"
         self.placeholder_color = "#888888"
         
-        # Conversation state tracking
-        self.conversation_state = "neutral"
-        self.user_name = "Alex"
-        self.last_interaction_time = time.time()
-        
-        # Pre-trained responses with expanded conversation capabilities
+        # Pre-trained responses
         self.responses = {
-            "greeting": [
-                f"Hi {self.user_name}! How can I help you today?",
-                f"Hello {self.user_name}! What would you like to work on?",
-                f"Hey there {self.user_name}! Ready to be productive?",
-                f"Good to see you {self.user_name}! What can I assist with?"
-            ],
-            "how_are_you": [
-                "I'm functioning well, thank you for asking! As an AI, I don't have feelings, but I'm fully operational and ready to help you with your tasks. How about you?",
-                "I'm running smoothly today! Ready to help you be productive. How are you doing?",
-                "All systems operational! I'm here and ready to assist. How's your day going?",
-                "I'm doing great - always available when you need me! How are things with you?"
-            ],
-            "how_is_day": [
-                "My day is productive as always! I've been helping users organize their work and brainstorm ideas. What about your day?",
-                "It's been a good day so far! I've assisted with several interesting projects. How's your day progressing?",
-                "No days off for an AI assistant! I'm here 24/7. Has your day been productive so far?",
-                "My day is what I make of it - helping you be more efficient! How has your day been?"
-            ],
-            "good_day": [
-                "That's wonderful to hear! A positive mindset really boosts productivity.",
-                "Great! When we're having a good day, we can accomplish so much more.",
-                "I'm glad to hear that! Would you like to make it even more productive?",
-                "Excellent! Let's channel that positive energy into your work."
-            ],
-            "bad_day": [
-                "I'm sorry to hear that. Sometimes taking a short break can help refresh your perspective.",
-                "Don't worry, we all have those days. Maybe I can help with something to make it better?",
-                "I understand. Would focusing on a specific task help take your mind off things?",
-                "Remember that tomorrow is a new day. Is there something I can help with right now?"
-            ],
-            "ask_question": [
+            "Ask a question": [
                 "I'd be happy to answer your question. Could you please provide more details?",
                 "That's an interesting question. Based on my knowledge, I'd say...",
                 "Great question! Here's what you need to know about that topic..."
             ],
-            "draft_anything": [
+            "Draft anything": [
                 "I'd be happy to help you draft that. What specific content are you looking to create?",
                 "Let me create a draft for you. Here's a starting point...",
                 "I can help with drafting. Based on your needs, I suggest..."
             ],
-            "brainstorm_ideas": [
+            "Brainstorm ideas": [
                 "Let's brainstorm some ideas together. Here are a few initial thoughts...",
                 "Great! I love brainstorming. Here are some concepts to consider...",
                 "Based on your topic, here are some innovative ideas to explore..."
-            ],
-            "farewell": [
-                "Goodbye! Let me know if you need anything else.",
-                "See you later! Feel free to come back if you have more questions.",
-                "Have a great day! Don't hesitate to reach out if you need help.",
-                "Talk to you soon! I'm here whenever you need assistance."
-            ],
-            "thanks": [
-                "You're welcome! Happy to help.",
-                "Anytime! That's what I'm here for.",
-                "Glad I could assist! Let me know if you need anything else.",
-                "My pleasure! Is there anything else you'd like help with?"
-            ],
-            "default": [
-                "I'd be happy to help with that. Could you provide more details?",
-                "That's an interesting request. Let me think about how I can assist...",
-                "I can help with that. Here's what I suggest...",
-                "Let me see how I can best assist you with this..."
-            ]
-        }
-        
-        # Knowledge base for various topics
-        self.knowledge = {
-            "productivity": [
-                "Research shows that taking regular breaks actually improves focus and productivity.",
-                "The Pomodoro Technique (25 minutes of work followed by a 5-minute break) is highly effective for maintaining concentration.",
-                "Prioritizing your tasks using the Eisenhower Matrix can help you focus on what's truly important.",
-                "A cluttered workspace can lead to a cluttered mind. Consider organizing your digital workspace for better focus."
-            ],
-            "notion_tips": [
-                "You can use templates in Notion to quickly create pages for common projects.",
-                "Linking databases in Notion allows you to create powerful relationships between different types of information.",
-                "The toggle list feature in Notion is great for organizing information without clutter.",
-                "You can use @ mentions in Notion to link to other pages, people, or dates."
-            ],
-            "time_management": [
-                "Time blocking is an effective method for managing your schedule and ensuring important tasks get done.",
-                "The 2-minute rule: if a task takes less than 2 minutes, do it immediately rather than putting it off.",
-                "Setting specific, achievable goals for each day increases the likelihood of accomplishing them.",
-                "Reviewing your week every Friday helps you prepare for a productive week ahead."
             ]
         }
         
@@ -123,7 +47,8 @@ class NotionAIChatbot:
         header_frame.pack(fill=tk.X)
         header_frame.pack_propagate(False)
         
-        header_label = tk.Label(header_frame, text="Notion AI", font=("Arial", 16, "bold"), 
+        header_label = tk.Label(header_frame, text="Notion AI", font=("Arial", 16, "bold"),) 
+        header_label = tk.Label(header_frame, text="chatAwesome AI", font=("Arial", 16, "bold"), 
                                fg=self.text_color, bg=self.header_bg)
         header_label.pack(side=tk.LEFT, padx=20, pady=20)
         
@@ -139,7 +64,7 @@ class NotionAIChatbot:
         self.chat_area.config(state=tk.DISABLED)
         
         # Add welcome message
-        self.add_message(random.choice(self.responses["greeting"]), is_user=False)
+        self.add_message("Hi Alex! How can I help you today?", is_user=False)
         
         # Suggested prompts
         suggestions_frame = tk.Frame(self.root, bg=self.chat_bg)
@@ -150,9 +75,9 @@ class NotionAIChatbot:
         suggestions_label.pack(fill=tk.X, pady=(0, 8))
         
         suggestions = [
-            "How are you?",
-            "How's your day going?",
-            "Tell me about productivity"
+            "Ask a question",
+            "Draft anything",
+            "Brainstorm ideas"
         ]
         
         for suggestion in suggestions:
@@ -214,77 +139,29 @@ class NotionAIChatbot:
         self.input_entry.insert(0, "Ask anything or type / for commands")
         self.input_entry.config(fg=self.placeholder_color)
         
-        # Update last interaction time
-        self.last_interaction_time = time.time()
-        
         # Generate AI response after a short delay
         self.root.after(500, self.generate_response, message)
     
     def generate_response(self, user_message):
-        # Convert to lowercase for easier matching
-        lower_message = user_message.lower()
-        
-        # Determine conversation context and generate appropriate response
-        if any(word in lower_message for word in ["hi", "hello", "hey", "greetings"]):
-            response = random.choice(self.responses["greeting"])
-            self.conversation_state = "greeted"
-            
-        elif any(word in lower_message for word in ["how are you", "how're you", "how do you feel"]):
-            response = random.choice(self.responses["how_are_you"])
-            self.conversation_state = "asked_about_me"
-            
-        elif any(word in lower_message for word in ["how is your day", "how's your day", "how was your day"]):
-            response = random.choice(self.responses["how_is_day"])
-            self.conversation_state = "asked_about_day"
-            
-        elif any(word in lower_message for word in ["good", "great", "excellent", "wonderful", "fine", "okay"]) and self.conversation_state in ["asked_about_me", "asked_about_day"]:
-            response = random.choice(self.responses["good_day"])
-            # Add a productivity tip after positive response
-            response += " " + random.choice(self.knowledge["productivity"])
-            self.conversation_state = "neutral"
-            
-        elif any(word in lower_message for word in ["bad", "not good", "terrible", "awful", "tired", "stress"]) and self.conversation_state in ["asked_about_me", "asked_about_day"]:
-            response = random.choice(self.responses["bad_day"])
-            # Add a helpful tip
-            response += " " + random.choice(self.knowledge["time_management"])
-            self.conversation_state = "neutral"
-            
-        elif any(word in lower_message for word in ["bye", "goodbye", "see you", "farewell"]):
-            response = random.choice(self.responses["farewell"])
-            self.conversation_state = "neutral"
-            
-        elif any(word in lower_message for word in ["thank", "thanks", "appreciate"]):
-            response = random.choice(self.responses["thanks"])
-            self.conversation_state = "neutral"
-            
-        elif "productivity" in lower_message:
-            response = "I know quite a bit about productivity! " + random.choice(self.knowledge["productivity"])
-            self.conversation_state = "sharing_knowledge"
-            
-        elif "notion" in lower_message:
-            response = "Here's a Notion tip for you: " + random.choice(self.knowledge["notion_tips"])
-            self.conversation_state = "sharing_knowledge"
-            
-        elif "time management" in lower_message:
-            response = "Time management is crucial for productivity. " + random.choice(self.knowledge["time_management"])
-            self.conversation_state = "sharing_knowledge"
-            
-        elif any(word in lower_message for word in ["ask", "question"]):
-            response = random.choice(self.responses["ask_question"])
-            self.conversation_state = "answering_question"
-            
-        elif any(word in lower_message for word in ["draft", "write", "create"]):
-            response = random.choice(self.responses["draft_anything"])
-            self.conversation_state = "drafting"
-            
-        elif any(word in lower_message for word in ["brainstorm", "idea", "ideas"]):
-            response = random.choice(self.responses["brainstorm_ideas"])
-            self.conversation_state = "brainstorming"
-            
+        # Find the best matching prompt
+        best_match = None
+        for prompt in self.responses.keys():
+            if prompt.lower() in user_message.lower():
+                best_match = prompt
+                break
+                
+        # If no direct match, use a general response
+        if not best_match:
+            general_responses = [
+                "I'd be happy to help with that. Could you provide more details?",
+                "That's an interesting request. Let me think about how I can assist...",
+                "I can help with that. Here's what I suggest..."
+            ]
+            response = random.choice(general_responses)
         else:
-            response = random.choice(self.responses["default"])
-            self.conversation_state = "neutral"
-        
+            # Select a random response from the matching category
+            response = random.choice(self.responses[best_match])
+            
         self.add_message(response, is_user=False)
     
     def add_message(self, message, is_user=True):
